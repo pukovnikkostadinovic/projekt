@@ -63,36 +63,62 @@ addKategPage: (req, res) => {
     },
 
 addKateg: (req, res) => {
-        let message = '';
-
-        let ime_kategorije = req.body.ime_kateg;
-        let kratak_opis = req.body.kr_opis;
-	console.log(typeof(ime_kategorije));
-	console.log(kratak_opis);
-	
+        let message = '';	
 	let kategorija = new Kategorija;
 	
-	kategorija.ime_kategorije= 'ahhahllllahahsdsdsahahha';
-	kategorija.kratak_opis = 'odsdkkksdpis';
-
+	kategorija.ime_kategorije=req.body.ime_kateg;
+	kategorija.kratak_opis = req.body.kr_opis;
 	kategorija.save().then(()=>{
 		res.redirect('/');
 	});
 
-
-
-
-
-        /*let query = "INSERT INTO `kategorije_komponenti` (ime_kategorije, kratak_opis)  VALUES ('" +
-                            ime_kategorije + "', '" + kratak_opis + "')";
-                        db.query(query, (err, result) => {
-                            if (err) {
-                                return res.status(500).send(err);
-                            }
-                            res.redirect('/');
-});*/
-
 },
+deleteKateg: (req, res) => {
+        let kategId = req.params.id;
+        
+	Kategorija.destroy({
+   	where: {
+      	id: kategId
+   	}
+	}).then(()=> {
+		res.redirect('/');
+		});
+		
+    },
+editKategPage: (req, res) => {
+        let kategId = req.params.id;
+        
+	Kategorija.findAll({
+	where:{
+			id:kategId
+			}
 
-
+	}).then(result=>{
+		res.render('edit-kateg.ejs', {
+                title: "Izmjeni Kategoriju"
+                ,kategorija: result[0]
+                ,message: ''
+            });
+	});
+    },
+editKateg: (req, res) => {
+        let kategId = req.params.id;
+        let ime_kategorije = req.body.ime_kat;
+        let kratak_opis = req.body.kr_op;
+	console.log(kategId);
+	console.log(ime_kategorije);
+	console.log(kratak_opis);
+	Kategorija.update({
+  	ime_kategorije: ime_kategorije,
+	kratak_opis: kratak_opis,
+	},
+	{
+	where:{
+			id: kategId
+			}
+		}).then(() => {
+			res.redirect('/');
+				});
+	
+    },
 }
