@@ -1,0 +1,32 @@
+const Sequelize = require('sequelize');
+const sequelize= require('../database/connection');
+
+module.exports = sequelize.define("komponente_v1", {
+    komp_id:{
+	primaryKey: true,
+	type: Sequelize.INTEGER,
+	},
+	ime_komponente: {
+      type: Sequelize.STRING
+    	}, 
+   kateg_id:{
+	type: Sequelize.INTEGER
+	},
+    ime_komponente: {
+      type: Sequelize.STRING
+    },
+    kratak_opis_komp: {
+      type: Sequelize.STRING(400)
+    },
+    komada: {
+      type: Sequelize.DECIMAL(32,0)
+    }
+
+  },{
+
+freezeTableName:true,
+timestamps:false,
+charset:'cp1250',
+collate:'cp1250_croatian_ci'
+
+});

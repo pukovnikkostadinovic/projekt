@@ -1,0 +1,29 @@
+const Sequelize = require('sequelize');
+const sequelize= require('../database/connection');
+
+module.exports = sequelize.define("komp_lok_kol_v1", {
+    id:{
+	primaryKey: true,
+	type: Sequelize.INTEGER,
+	},
+	komp_id: {
+      type: Sequelize.INTEGER
+    	}, 
+   ime_komponente:{
+	type: Sequelize.STRING
+	},
+    ime_lokacije: {
+      type: Sequelize.STRING
+    },
+    kolicina: {
+      type: Sequelize.INTEGER
+    }
+
+  },{
+
+freezeTableName:true,
+timestamps:false,
+charset:'cp1250',
+collate:'cp1250_croatian_ci'
+
+});

@@ -1,0 +1,31 @@
+<% include partials/header.ejs %>
+<div class="container">
+<ul class="list-group">
+ <% kat.forEach((kategorija, index)=>{ %>
+
+  <li class="list-group-item"><h3><strong>Kategorija: <%= kategorija.ime_kategorije %></strong></h3></li>
+<div class="row">
+ <% svekomp.forEach((komponenta, index) => { %>
+<% if (kategorija.id==komponenta.kateg_id){ %>
+
+  <div class="col-sm-3">
+    <div class="card">
+	  <img class="card-img-top" src="<% if (komponenta.slika){ %>assets/img/<%= komponenta.slika %><% } else{ %>assets/img/no_image.jpg<% } %>" alt="Card image">
+      <div class="card-body">
+        <h5 class="card-title"><%= komponenta.ime_komponente %></h5>
+        <p class="card-text"><%= komponenta.kratak_opis_komp %></p>
+        <a href="komp/<%= komponenta.id %>" class="btn btn-primary">Lokacija</a>
+      </div>
+    </div>
+  </div>
+
+<% } %>
+<% }) %>
+</div>
+
+  <% }) %>
+</ul>
+</div>
+
+</body>
+</html>

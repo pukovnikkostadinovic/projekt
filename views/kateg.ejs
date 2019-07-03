@@ -1,0 +1,31 @@
+<% include partials/header.ejs %>
+    <div class="table-wrapper">
+        <% if (kategorije.length > 0) {%>
+            <table class="table table-hovered">
+                <thead class="thead-dark">
+                    <tr>
+                        <th scope="col">Kategorija</th>
+                        <th scope="col">Kratak naziv</th>
+                        <th scope="col">Akcija</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% kategorije.forEach((kategorija, index) => { %>
+                        <tr>
+                            <td><a href="kateg/<%= kategorija.id %>"><%= kategorija.ime_kategorije %></a></td>
+                            <td><%= kategorija.kratak_opis %></td>
+                            <td>
+                                <a href="/izmjeni/<%= kategorija.id %>" target="_blank" rel="noopener" class="btn btn-sm btn-success">Izmjeni</a>
+                                <a href="/izbrisi/<%= kategorija.id %>" class="btn btn-sm btn-danger">Izbriši</a>
+                            </td>
+                        </tr>
+                    <% }) %>
+                </tbody>
+            </table>
+        <% } else { %>
+            <p class="text-center">No players found. Go <a href="/add" >here</a> to add players.</p>
+        <% } %>
+    </div>
+</div>
+</body>
+</html>
