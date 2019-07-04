@@ -1,3 +1,7 @@
+const fs = require('fs');
+
+
+
 const Komponenta_v1 = require("../src/models/Komponenta_v1");
 const Komp_lok_kol_v1 = require("../src/models/Komp_lok_kol_v1");
 const Komp_lok_kol_v2 = require("../src/models/Komp_lok_kol_v2");
@@ -5,9 +9,7 @@ const Kategorija= require("../src/models/Kategorija");
 const Komponenta = require("../src/models/Komponenta");
 const Lokacija = require("../src/models/Lokacija");
 const Komp_lok_kol = require("../src/models/Komp_lok_kol");
-
-const fs = require('fs');
-
+const img_path = require('../config/keys').img_path;
 
 module.exports = {
 
@@ -54,7 +56,6 @@ sveKompPage: (req, res) => {
 					svekomp:results[1],
 					kat: results[0]
 				});
-				console.log(results[0]);
 			});
 
     },
@@ -197,6 +198,149 @@ addKomp: (req, res) => {
 
     },
 
+editKompPage: (req,res)=>{
+	let kompId=req.params.id;
+	
+	let komponenta = Komponenta.findAll({
+		where:{
+				id: kompId
+				}
+	});
+	let kategorija = Kategorija.findAll({});	
+
+	Promise
+			.all([komponenta,kategorija])
+			.then(results=>{
+				res.render('edit-komp.ejs',{
+					title:'Izmjeni Komponentu',
+					komponenta:results[0][0],
+					kategorije: results[1],
+					message: ''
+				});
+			});
+
+},
+editKomp: (req, res) => {
+        let kompId = req.params.id;
+        let ime_komponente = req.body.ime_komp;
+        let kategorija = req.body.kategorija;
+	let kr_opis = req.body.kr_op;
+	let slika;
+	let uploadedFile;
+        let image_name = req.body.slika;
+        let fileExtension;
+	let obrisi;
+
+	if( image_name.length > 0){
+		obrisi = req.body.brisisl;
+		image_name=req.body.slika;
+		if(obrisi == 1){
+		fs.unlink(img_path+image_name, (err) => {
+					if (err) throw err;
+		  			console.log('public/assets/img/'+image_name+' was deleted');
+				});
+			image_name = null;
+		    }
+
+	}else{
+		slika=req.body.slika;
+		uploadedFile = req.files.image;
+ 		 //let img_name = uploadedFile.name;
+		image_name= uploadedFile.name;
+        	fileExtension = uploadedFile.mimetype.split('/')[1];
+		uploadedFile.mv(img_path+`${image_name}`, (err ) => {
+                       if (err) {
+                           return res.status(500).send(err);
+                        }
+		image_name= "'"+image_name+"'";
+		});
+	
+			}
+
+	Komponenta.update({
+  	ime_komponente: ime_komponente,
+	kratak_opis_komp: kr_opis,
+	slika: image_name,
+	kateg_id: kategorija
+	},
+	{
+	where:{
+			id: kompId
+			}
+		}).then(() => {
+			res.redirect('/');
+				});
+	
+    },
+deleteKomp: (req, res) => {
+        let kompId = req.params.id;
+	
+	Komponenta.findAll({
+		where:{
+				id: kompId
+				}
+	}).then(result => {
+	if(result[0].slika){
+		fs.unlink(img_path+result[0].slika, (err) => {
+					if (err) throw err;
+		  			console.log('public/assets/img/'+result[0].slika+' was deleted');
+				});
+	}
+	Komponenta.destroy({
+   	where: {
+      	id: kompId
+   	}
+	}).then(()=> {
+		res.redirect('/');
+		});
+	});
+
+        /*let deleteKompQuery = 'DELETE FROM komponente WHERE id = "' + kompId + '"';
+
+                       db.query(deleteKompQuery, (err, result) => {
+                    if (err) {
+                        return res.status(500).send(err);
+                    }
+                    res.redirect('/');
+                     });*/
+    },
+addKompLokPage:(req,res)=>{
+	 Lokacija.findAll({}).then( result =>{
+		res.render('add-komp-lok.ejs', {
+                title: "Dodaj lokaciju i količinu"
+                ,lokacije: result
+            });
+
+	});
+
+	/*let query="select * from lokacije";
+	
+	db.query(query,(err,result)=>{
+		if(err){
+			return res.status(500).send(err);
+		}
+		res.render('add-komp-lok.ejs', {
+                title: "Dodaj lokaciju i kolicinu"
+                ,lokacije: result
+            });
+	});*/	
+},
+addKompLok:(req,res)=>{
+	let kompId=req.params.id;
+	let kolicina=req.body.kolicina;
+	let lokId=req.body.lokacija;
+	
+	let komp_lok_kol = new Komp_lok_kol;
+	
+	komp_lok_kol.komp_id = req.params.id;
+	komp_lok_kol.lok_id = req.body.lokacija;
+	komp_lok_kol.kolicina = req.body.kolicina;
+	
+	komp_lok_kol.save().then(()=>{
+		res.redirect('/');
+	});
+
+},
 
 
 }
