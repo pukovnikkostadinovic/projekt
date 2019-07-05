@@ -1,14 +1,14 @@
-const Sequelize = require('sequelize');
-const sequelize= require('../database/connection');
+'use strict';
 
-
-module.exports = sequelize.define("users", {
+module.exports = {
+  up: (queryInterface, Sequelize) => {
+   return queryInterface.createTable("users", {
 id:{
 	type:Sequelize.INTEGER,
 	primaryKey: true,
 	autoIncrement: true
 	},
-name:{
+      name:{
 	type: Sequelize.STRING(20),
 	allowNull: false,
 	unique: false
@@ -31,10 +31,15 @@ raz_ovl: {
 	}
 	}
   },
-
 {
 
 freezeTableName:true,
 timestamps:false
 
 });
+  },
+
+  down: (queryInterface, Sequelize) => {
+   return queryInterface.dropTable("users");
+  }
+};
